@@ -17,38 +17,45 @@ events = [
     Event(2, "Python Workshop")
 ]
 
-# TODO: Task 1 - Define the Problem
-# Create a new event from JSON input
+# Create a new event
 @app.route("/events", methods=["POST"])
 def create_event():
-    # TODO: Task 2 - Design and Develop the Code
+    data = request.get_json()
+    title = data.get("title")
 
-    # TODO: Task 3 - Implement the Loop and Process Each Element
+    # Create new ID (increment based on current max)
+    new_id = max([event.id for event in events], default=0) + 1
 
-    # TODO: Task 4 - Return and Handle Results
-    pass
+    new_event = Event(new_id, title)
+    events.append(new_event)
 
-# TODO: Task 1 - Define the Problem
-# Update the title of an existing event
+    return jsonify(new_event.to_dict()), 201
+
+
+# Update an existing event
 @app.route("/events/<int:event_id>", methods=["PATCH"])
 def update_event(event_id):
-    # TODO: Task 2 - Design and Develop the Code
+    data = request.get_json()
+    title = data.get("title")
 
-    # TODO: Task 3 - Implement the Loop and Process Each Element
+    for event in events:
+        if event.id == event_id:
+            event.title = title
+            return jsonify(event.to_dict()), 200
 
-    # TODO: Task 4 - Return and Handle Results
-    pass
+    return jsonify({"error": "Event not found"}), 404
 
-# TODO: Task 1 - Define the Problem
-# Remove an event from the list
+
+# Delete an event
 @app.route("/events/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
-    # TODO: Task 2 - Design and Develop the Code
+    for event in events:
+        if event.id == event_id:
+            events.remove(event)
+            return "", 204
 
-    # TODO: Task 3 - Implement the Loop and Process Each Element
+    return jsonify({"error": "Event not found"}), 404
 
-    # TODO: Task 4 - Return and Handle Results
-    pass
 
 if __name__ == "__main__":
     app.run(debug=True)
